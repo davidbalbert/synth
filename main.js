@@ -134,9 +134,9 @@
                 intonation = intonations.just;
         };
 
-        return s.instrument(function() {
+        this.instrument = s.instrument(function() {
             return pitches
-                     .map(function() { return s.sin({freq: intonations.equal.apply(intonations, arguments)}); })
+                     .map(function(intervals) { return s.sin({freq: freq.apply(null, intervals)}); })
                      .reduce(function(a, b) { return a + b; }, 0);
         });
     }
