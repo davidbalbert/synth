@@ -106,9 +106,46 @@
 
     window.Synth = Synth;
     window.s = new Synth();
-    //window.sin = sin;
+
+    var tonic = 440;
+
+    var intonations = {
+        equal: function(octaves, fifths, thirds) {
+            var semitones = octaves * 12 + fifths * 7 + thirds * 4;
+            return tonic * Math.pow(2, semitones / 12);
+        },
+
+        just: function(octaves, fifths, thirds) {
+            return tonic * Math.pow(2, octaves) * Math.pow(1.5, fifths) * Math.pow(1.25, thirds);
+        }
+    };
+
+    function Switchable(pitches) {
+        var intonation = intonations.just;
+
+        function freq() {
+            return intonation.apply(null, arguments);
+        }
+
+        this.toggle = function() {
+            if (intonation === intonations.just)
+                intonation = intonations.equal;
+            else
+                intonation = intonations.just;
+        };
+
+        return s.instrument(function() {
+            return pitches
+                     .map(function() { return s.sin({freq: intonations.equal.apply(intonations, arguments)}); })
+                     .reduce(function(a, b) { return a + b; }, 0);
+        });
+    }
+
+    window.Switchable = Switchable;
 
     window.foo = s.instrument(function () {
-        return 0.3 * s.sin({freq: 440});
+        return s.sin({freq: intonations.equal(0,0,0)}) +
+               s.sin({freq: intonations.equal(0,1,0)}) +
+               s.sin({freq: intonations.equal(0,0,1)});
     });
 })();
