@@ -68,7 +68,7 @@
     Synth.prototype.sin = function (options) {
         var freq = options.freq;
 
-        return Math.sin(2 * Math.pi * freq * this.sampleNum / this.sampleRate());
+        return Math.sin(2 * Math.PI * freq * this.sampleNum / this.sampleRate());
     };
 
     Synth.prototype.sampleRate = function () {
