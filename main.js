@@ -19,7 +19,7 @@
                 var outputData = outputBuffer.getChannelData(channel);
 
                 for (var i = 0; i < outputBuffer.length; i++) {
-                    self.synth.sampleNum = self.sampleNum;
+                    synth.currentInstrument = self;
                     outputData[i] = sampleGenerator();
                     self.sampleNum++;
                 }
@@ -68,7 +68,7 @@
     Synth.prototype.sin = function (options) {
         var freq = options.freq;
 
-        return Math.sin(2 * Math.PI * freq * this.sampleNum / this.sampleRate());
+        return Math.sin(2 * Math.PI * freq * this.currentInstrument.sampleNum / this.sampleRate());
     };
 
     Synth.prototype.sampleRate = function () {
