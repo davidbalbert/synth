@@ -152,4 +152,6 @@
                sin({freq: intonations.equal(0,1,0)}) +
                sin({freq: intonations.equal(0,0,1)});
     });
+
+    window.sw = new Switchable([[0,2,0],[0,2,-1],[0,1,0],[0,1,-1],[0,-1,0]]);
 })();
