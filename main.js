@@ -107,6 +107,10 @@
     window.Synth = Synth;
     window.s = new Synth();
 
+    for (var fn of ['instrument', 'stop', 'sin']) {
+        window[fn] = s[fn].bind(s);
+    }
+
     var tonic = 440;
 
     var intonations = {
@@ -134,18 +138,18 @@
                 intonation = intonations.just;
         };
 
-        this.instrument = s.instrument(function() {
+        this.instrument = instrument(function() {
             return pitches
-                     .map(function(intervals) { return s.sin({freq: freq.apply(null, intervals)}); })
+                     .map(function(intervals) { return sin({freq: freq.apply(null, intervals)}); })
                      .reduce(function(a, b) { return a + b; }, 0);
         });
     }
 
     window.Switchable = Switchable;
 
-    window.foo = s.instrument(function () {
-        return s.sin({freq: intonations.equal(0,0,0)}) +
-               s.sin({freq: intonations.equal(0,1,0)}) +
-               s.sin({freq: intonations.equal(0,0,1)});
+    window.foo = instrument(function () {
+        return sin({freq: intonations.equal(0,0,0)}) +
+               sin({freq: intonations.equal(0,1,0)}) +
+               sin({freq: intonations.equal(0,0,1)});
     });
 })();
