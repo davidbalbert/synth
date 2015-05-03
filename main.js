@@ -42,7 +42,6 @@
         this.synth.sampleRate();
     };
 
-
     function Synth() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.inputs = {};
@@ -68,7 +67,25 @@
     Synth.prototype.sin = function (options) {
         var freq = options.freq;
 
-        return Math.sin(2 * Math.PI * freq * this.currentInstrument.sampleNum / this.sampleRate());
+        return Math.sin(2 * Math.PI * freq * this.seconds());
+    };
+
+    Synth.prototype.line = function (start, end, duration) {
+        var slope = (end - start) / duration;
+        var t = this.seconds();
+
+        if (t >= duration && end === 0) {
+            // TODO: Figure out how to stop without a tick.
+            return end;
+        } else if (t >= duration) {
+            return end;
+        } else {
+            return slope * t + start;
+        }
+    };
+
+    Synth.prototype.seconds = function () {
+        return this.currentInstrument.sampleNum / this.sampleRate();
     };
 
     Synth.prototype.sampleRate = function () {
@@ -85,6 +102,16 @@
 
             // Don't reset this.nextInput. We don't ever reuse ids.
             this.inputs = {};
+        } else if (id.constructor === Instrument) {
+            for (var n in this.inputs) {
+                inst = this.inputs[n];
+
+                if (inst === id) {
+                    inst.stop();
+                    delete this.inputs[n];
+                    return;
+                }
+            }
         } else if (typeof(id) === 'function') {
             for (var n in this.inputs) {
                 inst = this.inputs[n];
@@ -107,7 +134,7 @@
     window.Synth = Synth;
     window.s = new Synth();
 
-    for (var fn of ['instrument', 'stop', 'sin']) {
+    for (var fn of ['instrument', 'stop', 'sin', 'line']) {
         window[fn] = s[fn].bind(s);
     }
 
@@ -151,6 +178,10 @@
         return sin({freq: intonations.equal(0,0,0)}) +
                sin({freq: intonations.equal(0,1,0)}) +
                sin({freq: intonations.equal(0,0,1)});
+    });
+
+    window.beep = instrument(function () {
+        return line(1, 0, 1) * sin({freq: 440});
     });
 
     window.sw = new Switchable([[0,2,0],[0,2,-1],[0,1,0],[0,1,-1],[0,-1,0]]);
