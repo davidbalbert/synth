@@ -64,9 +64,7 @@
         return instFn;
     };
 
-    Synth.prototype.sin = function (options) {
-        var freq = options.freq;
-
+    Synth.prototype.sin = function (freq) {
         return Math.sin(2 * Math.PI * freq * this.seconds());
     };
 
@@ -167,7 +165,7 @@
 
         this.instrument = instrument(function() {
             return pitches
-                     .map(function(intervals) { return sin({freq: freq.apply(null, intervals)}); })
+                     .map(function(intervals) { return sin(freq.apply(null, intervals)); })
                      .reduce(function(a, b) { return a + b; }, 0);
         });
     }
@@ -175,13 +173,13 @@
     window.Switchable = Switchable;
 
     window.foo = instrument(function () {
-        return sin({freq: intonations.equal(0,0,0)}) +
-               sin({freq: intonations.equal(0,1,0)}) +
-               sin({freq: intonations.equal(0,0,1)});
+        return sin(intonations.equal(0,0,0)) +
+               sin(intonations.equal(0,1,0)) +
+               sin(intonations.equal(0,0,1));
     });
 
     window.beep = instrument(function () {
-        return line(1, 0, 1) * sin({freq: 440});
+        return line(1, 0, 1) * sin(440);
     });
 
     window.sw = new Switchable([[0,2,0],[0,2,-1],[0,1,0],[0,1,-1],[0,-1,0]]);
