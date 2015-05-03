@@ -15,11 +15,12 @@
         this.p.onaudioprocess = function (e) {
             var outputBuffer = e.outputBuffer;
 
+            synth.currentInstrument = self;
+
             for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
                 var outputData = outputBuffer.getChannelData(channel);
 
                 for (var i = 0; i < outputBuffer.length; i++) {
-                    synth.currentInstrument = self;
                     outputData[i] = sampleGenerator();
                     self.sampleNum++;
                 }
@@ -72,8 +73,8 @@
         var slope = (end - start) / duration;
         var t = this.seconds();
 
-        if (t >= duration && end === 0) {
-            // TODO: Figure out how to stop without a tick.
+        if (t >= duration + 1 && end === 0) {
+            this.stop(this.currentInstrument);
             return end;
         } else if (t >= duration) {
             return end;
